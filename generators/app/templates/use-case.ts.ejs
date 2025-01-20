@@ -1,0 +1,14 @@
+import { Injectable } from '@nestjs/common';
+import { IDataServices } from '@core/abstracts';
+import { Create<%= pascalCaseName %>Dto } from '@core/dtos';
+
+@Injectable()
+export class <%= pascalCaseName %>UseCases {
+  constructor(
+    private dataServices: IDataServices,
+  ) {}
+  
+  create(create<%= pascalCaseName %>Dto: Create<%= pascalCaseName %>Dto) {
+    return this.dataServices.<%= name %>s.create(create<%= pascalCaseName %>Dto);
+  }
+}

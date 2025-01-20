@@ -1,0 +1,6 @@
+import { IsNotEmpty } from 'class-validator';
+
+export class Create<%= pascalCaseName %>Dto {
+  @IsNotEmpty()
+  name: string;
+}
