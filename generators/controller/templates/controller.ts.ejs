@@ -1,0 +1,9 @@
+import { Controller, Get } from '@nestjs/common';
+
+@Controller('<%= name %>')
+export class <%= pascalCaseName %>Controller {
+  @Get()
+  getHello(): string {
+    return 'Hello World!';
+  }
+}
