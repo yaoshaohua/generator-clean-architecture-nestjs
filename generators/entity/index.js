@@ -1,47 +1,14 @@
-const Generator = require("yeoman-generator");
-const { pascalCase } = require("change-case");
+const BaseGenerator = require("../base-generator");
 
-const ROOT_DIR = 'src/core/entities';
-const INDEX_FILE_PATH = `${ROOT_DIR}/index.ts`;
-
-module.exports = class extends Generator {
+module.exports = class extends BaseGenerator {
   constructor(args, opts) {
-    super(args, opts);
-    this.argument("name", { type: String, required: false });
-  }
-
-  initializing() {
-    this.conflicter.force = true;
-  }
-
-  prompting() {
-    if (!this.options.name) {
-      return this.prompt([
-        {
-          type: "input",
-          name: "name",
-          message: "Please enter the entity name:",
-          default: "test"
-        }
-      ]).then(props => {
-        this.options.name = props.name;
-      });
-    }
-    return Promise.resolve();
+    super(args, opts, {
+      rootDir: 'src/core/entities',
+      fileSuffix: 'entity'
+    });
   }
 
   writing() {
-    const { name } = this.options;
-    const pascalCaseName = pascalCase(name);
-
-    this.fs.copyTpl(
-      this.templatePath('entity.ts.ejs'),
-      this.destinationPath(`${ROOT_DIR}/${name}.entity.ts`),
-      { pascalCaseName }
-    );
-    this.fs.append(
-      this.destinationPath(INDEX_FILE_PATH),
-      `export * from './${name}.entity';\n`
-    );
+    super.writing();
   }
 };
