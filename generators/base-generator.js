@@ -36,14 +36,14 @@ module.exports = class BaseGenerator extends Generator {
     const { rootDir, fileSuffix } = this.config;
     const fileName = `${name}.${fileSuffix}.ts`;
 
-    // Generate new file from template
+    // generate new file from template
     this.fs.copyTpl(
       this.templatePath(`${fileSuffix}.ts.ejs`),
       this.destinationPath(`${rootDir}/${fileName}`),
       { name, pascalCaseName }
     );
 
-    // Append export statement to index.ts
+    // append export statement to index.ts
     this.fs.append(
       this.destinationPath(`${rootDir}/index.ts`),
       `export * from './${fileName.replace(/\.ts$/, '')}';\n`

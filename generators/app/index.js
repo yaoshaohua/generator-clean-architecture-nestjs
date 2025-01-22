@@ -1,7 +1,6 @@
 const Generator = require("yeoman-generator");
 const chalk = require("chalk");
 const yosay = require("yosay");
-const { pascalCase } = require("change-case");
 
 module.exports = class extends Generator {
   prompting() {
@@ -29,12 +28,14 @@ module.exports = class extends Generator {
 
   writing() {
     const { name } = this.props;
-    const pascalCaseName = pascalCase(name);
 
-    this.composeWith(require.resolve("../controllers"), { name });
-    // this.composeWith(require.resolve("../core"), { name });
-    // this.composeWith(require.resolve("../data-services"), { name });
-    // this.composeWith(require.resolve("../use-cases"), { name });
-    // this.composeWith(require.resolve("../app-module"), { name });
+    this.composeWith(require.resolve("../app-module"), { name });
+    this.composeWith(require.resolve("../controller"), { name });
+    this.composeWith(require.resolve("../dto"), { name });
+    this.composeWith(require.resolve("../entity"), { name });
+    this.composeWith(require.resolve("../model"), { name });
+    this.composeWith(require.resolve("../mongo-data-service-module"), { name });
+    this.composeWith(require.resolve("../mongo-data-service-service"), { name });
+    this.composeWith(require.resolve("../use-case"), { name });
   }
 };

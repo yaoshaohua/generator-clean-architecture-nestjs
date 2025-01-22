@@ -1,12 +1,11 @@
 const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
-const pluralize = require("pluralize");
 const utils = require("../../utils/index.js");
 
-const RELATIVE_PATH = 'src/core/abstracts/data-services.abstract.ts';
-const MODULE_NAME = '../entities';
+const RELATIVE_PATH = 'src/frameworks/data-services/mongo/mongo-data-services.module.ts';
+const MODULE_NAME = './model';
 
-const ABSTRACT_CLASS_PATTERN = /export\s+abstract\s+class\s+IDataServices\s*\{([\s\S]*?)\}/;
+const FOR_FEATURE_PATTERN = /MongooseModule\.forFeature\(\[\s*([\s\S]*?)\s*\]\)/;
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -24,7 +23,7 @@ module.exports = class extends Generator {
         {
           type: "input",
           name: "name",
-          message: "Please enter the abstract name:",
+          message: "Please enter the module name:",
           default: "test"
         }
       ]).then(props => {
@@ -37,19 +36,16 @@ module.exports = class extends Generator {
   writing() {
     const { name } = this.options;
     const pascalCaseName = pascalCase(name);
-    const pluralName = pluralize(name);
 
     const filePath = this.destinationPath(RELATIVE_PATH);
     let fileContent = this.fs.read(filePath);
 
-    // update import entity
-    fileContent = utils.updateImport(fileContent, MODULE_NAME, pascalCaseName);
+    // update import model
+    fileContent = utils.updateImport(fileContent, MODULE_NAME, `\n  ${pascalCaseName},\n  ${pascalCaseName}Schema\n`);
 
-    // update abstract class
-    const newAbstractProperty = `  abstract ${pluralName}: IGenericRepository<${pascalCaseName}>;\n`;
-    fileContent = fileContent.replace(ABSTRACT_CLASS_PATTERN, (match, p1) => {
-      return match.replace(p1, p1 + newAbstractProperty);
-    });
+    // update MongooseModule.forFeature
+    const newForFeatureStatement = `\n      { name: ${pascalCaseName}.name, schema: ${pascalCaseName}Schema },`;
+    fileContent = utils.updatePattern(fileContent, FOR_FEATURE_PATTERN, newForFeatureStatement);
 
     this.fs.write(filePath, fileContent);
   }

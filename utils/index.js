@@ -22,5 +22,11 @@ module.exports = {
       p1 = p1.trim().replace(/,$/, '');
       return `import { ${p1}, ${exportN} } from "${moduleName}";`;
     });
+  },
+
+  updatePattern(fileContent, pattern, newContent) {
+    return fileContent.replace(pattern, (match, p1) => {
+      return match.replace(p1, p1 + newContent);
+    });
   }
 } 
