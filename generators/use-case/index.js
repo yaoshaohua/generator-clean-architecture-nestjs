@@ -2,8 +2,7 @@ const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const fs = require("fs");
 const { mkdirSync } = fs;
-
-const ROOT_DIR = 'src/use-cases';
+const { PATH_CONSTANTS } = require("../../constants");
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -35,7 +34,7 @@ module.exports = class extends Generator {
     const { name } = this.options;
     const pascalCaseName = pascalCase(name);
 
-    const useCasesFolderPath = this.destinationPath(`${ROOT_DIR}/${name}`);
+    const useCasesFolderPath = this.destinationPath(`${PATH_CONSTANTS.USE_CASES_DIR}/${name}`);
     mkdirSync(useCasesFolderPath, { recursive: true });
 
     const copyTemplate = (templateFile, destinationFile) => {

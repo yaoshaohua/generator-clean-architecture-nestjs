@@ -2,13 +2,7 @@ const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const pluralize = require("pluralize");
 const utils = require("../../utils/index.js");
-
-const RELATIVE_PATH = 'src/frameworks/data-services/mongo/mongo-data-services.service.ts';
-const MODULE_NAME = './model';
-
-const PROPERTY_PATTERN = /implements IDataServices, OnApplicationBootstrap\s*\{([\s\S]*?)constructor\(/;
-const CONSTRUCTOR_PATTERN = /constructor\(([\s\S]*?)\)\s*\{/;
-const BOOTSTRAP_PATTERN = /onApplicationBootstrap\(\)\s*\{([\s\S]*?)\}\s*\n\s*}/;
+const { PATH_CONSTANTS, REGEXP_CONSTANTS } = require("../../constants");
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -41,23 +35,23 @@ module.exports = class extends Generator {
     const pascalCaseName = pascalCase(name);
     const pluralName = pluralize(name);
 
-    const filePath = this.destinationPath(RELATIVE_PATH);
+    const filePath = this.destinationPath(PATH_CONSTANTS.MONGO_DATA_SERVICES_SERVICE_PATH);
     let fileContent = this.fs.read(filePath);
 
     // update import model
-    fileContent = utils.updateImport(fileContent, MODULE_NAME, `\n  ${pascalCaseName},\n  ${pascalCaseName}Document\n`);
+    fileContent = utils.updateImport(fileContent, PATH_CONSTANTS.MODEL_RELATIVE_PATH, `\n  ${pascalCaseName},\n  ${pascalCaseName}Document\n`);
 
     // update property
     const newProperty = `  ${pluralName}: MongoGenericRepository<${pascalCaseName}>;\n`;
-    fileContent = utils.updatePattern(fileContent, PROPERTY_PATTERN, newProperty);
+    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_CLASS_UNTIL_CONSTRUCTOR, newProperty);
 
     // update constructor
     const newInject = `\n    @InjectModel(${pascalCaseName}.name)\n    private ${pascalCaseName}Repository: Model<${pascalCaseName}Document>,\n`;
-    fileContent = utils.updatePattern(fileContent, CONSTRUCTOR_PATTERN, newInject);
+    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_CONSTRUCTOR_PARAMETERS, newInject);
 
     // update bootstrap
     const newBootstrapDefine = `    this.${pluralName} = new MongoGenericRepository<${pascalCaseName}>(this.${pascalCaseName}Repository);`;
-    fileContent = utils.updatePattern(fileContent, BOOTSTRAP_PATTERN, newBootstrapDefine);
+    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_ONAPPLICATIONBOOTSTRAP_IMPLEMENTATION, newBootstrapDefine);
 
     this.fs.write(filePath, fileContent);
   }

@@ -1,11 +1,7 @@
 const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const utils = require("../../utils/index.js");
-
-const RELATIVE_PATH = 'src/frameworks/data-services/mongo/mongo-data-services.module.ts';
-const MODULE_NAME = './model';
-
-const FOR_FEATURE_PATTERN = /MongooseModule\.forFeature\(\[\s*([\s\S]*?)\s*\]\)/;
+const { PATH_CONSTANTS, REGEXP_CONSTANTS } = require("../../constants");
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -37,15 +33,15 @@ module.exports = class extends Generator {
     const { name } = this.options;
     const pascalCaseName = pascalCase(name);
 
-    const filePath = this.destinationPath(RELATIVE_PATH);
+    const filePath = this.destinationPath(PATH_CONSTANTS.MONGO_DATA_SERVICES_MODULE_PATH);
     let fileContent = this.fs.read(filePath);
 
     // update import model
-    fileContent = utils.updateImport(fileContent, MODULE_NAME, `\n  ${pascalCaseName},\n  ${pascalCaseName}Schema\n`);
+    fileContent = utils.updateImport(fileContent, PATH_CONSTANTS.MODEL_RELATIVE_PATH, `\n  ${pascalCaseName},\n  ${pascalCaseName}Schema\n`);
 
     // update MongooseModule.forFeature
     const newForFeatureStatement = `\n      { name: ${pascalCaseName}.name, schema: ${pascalCaseName}Schema },`;
-    fileContent = utils.updatePattern(fileContent, FOR_FEATURE_PATTERN, newForFeatureStatement);
+    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGOOSEMODULE_FORFEATURE_MODELS, newForFeatureStatement);
 
     this.fs.write(filePath, fileContent);
   }

@@ -2,11 +2,12 @@ const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const pluralize = require("pluralize");
 const utils = require("../../utils/index.js");
-
-const RELATIVE_PATH = 'src/core/abstracts/data-services.abstract.ts';
-const MODULE_NAME = '../entities';
-
-const ABSTRACT_CLASS_PATTERN = /export\s+abstract\s+class\s+IDataServices\s*\{([\s\S]*?)\}/;
+const {
+  PATH_CONSTANTS,
+  REGEXP_CONSTANTS,
+  SEPARATOR_CONSTANTS,
+  TEMPLATE_CONSTANTS
+} = require("../../constants");
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -39,18 +40,16 @@ module.exports = class extends Generator {
     const pascalCaseName = pascalCase(name);
     const pluralName = pluralize(name);
 
-    const filePath = this.destinationPath(RELATIVE_PATH);
-    let fileContent = this.fs.read(filePath);
+    const filePath = this.destinationPath(PATH_CONSTANTS.DATA_SERVICES_ABSTRACT_PATH);
 
-    // update import entity
-    fileContent = utils.updateImport(fileContent, MODULE_NAME, pascalCaseName);
-
-    // update abstract class
-    const newAbstractProperty = `  abstract ${pluralName}: IGenericRepository<${pascalCaseName}>;\n`;
-    fileContent = fileContent.replace(ABSTRACT_CLASS_PATTERN, (match, p1) => {
-      return match.replace(p1, p1 + newAbstractProperty);
-    });
-
-    this.fs.write(filePath, fileContent);
+    utils.chainFileOperations(this.fs, filePath)
+      .read()
+      .appendToImport(PATH_CONSTANTS.ENTITIES_RELATIVE_PATH, pascalCaseName)
+      .appendToMatchWithSeparator(
+        REGEXP_CONSTANTS.REGEX_IDATASERVICES_ABSTRACT_CLASS,
+        TEMPLATE_CONSTANTS.IDATASERVICES_PROPERTY_TEMPLATE(pluralName, pascalCaseName),
+        SEPARATOR_CONSTANTS.SEPARATOR_SEMICOLON
+      )
+      .write();
   }
 };
