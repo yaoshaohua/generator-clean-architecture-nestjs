@@ -5,5 +5,5 @@ module.exports = {
   MODULE_IMPORTS_TEMPLATE: pascalCaseName => `\n    ${pascalCaseName}UseCasesModule,`,
 
   IMPORT_CONTROLLER_TEMPLATE: pascalCaseName => `\n  ${pascalCaseName}Controller\n`,
-  MODULE_CONTROLLERS_TEMPLATE: pascalCaseName => `\n  ${pascalCaseName}Controller\n`,
+  MODULE_CONTROLLERS_TEMPLATE: pascalCaseName => `\n    ${pascalCaseName}Controller`,
 }

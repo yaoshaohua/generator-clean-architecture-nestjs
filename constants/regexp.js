@@ -11,6 +11,6 @@ module.exports = {
   REGEX_MONGODATASERVICES_ONAPPLICATIONBOOTSTRAP_IMPLEMENTATION: /onApplicationBootstrap\(\)\s*\{([\s\S]*?)\}\s*\n\s*}/,
 
   REGEX_USE_CASE_IMPORT: /import\s*{[^}]*}\s*from\s*['"][^'"]*['"];/g,
-  REGEX_MODULE_IMPORTS: /imports:\s*\[\s*([\s\S]*?)\s*\],/,
-  REGEX_MODULE_CONTROLLERS: /controllers:\s*\[\s*([\s\S]*?)\s*\],/,
+  REGEX_MODULE_IMPORTS: /(imports:\s*\[\s*[\s\S]*?)(?=\s*\],)/,
+  REGEX_MODULE_CONTROLLERS: /(controllers:\s*\[\s*[\s\S]*?)(?=\s*\],)/,
 };
