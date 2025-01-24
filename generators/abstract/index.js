@@ -47,7 +47,7 @@ module.exports = class extends Generator {
       .appendToImport(PATH_CONSTANTS.ENTITIES_RELATIVE_PATH, pascalCaseName)
       .appendToMatchWithSeparator(
         REGEXP_CONSTANTS.REGEX_IDATASERVICES_ABSTRACT_CLASS,
-        TEMPLATE_CONSTANTS.IDATASERVICES_PROPERTY_TEMPLATE(pluralName, pascalCaseName),
+        TEMPLATE_CONSTANTS.TEMPLATE_IDATASERVICES_ABSTRACT_CLASS(pluralName, pascalCaseName),
         SEPARATOR_CONSTANTS.SEPARATOR_SEMICOLON
       )
       .write();

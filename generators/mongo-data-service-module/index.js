@@ -1,7 +1,12 @@
 const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const utils = require("../../utils/index.js");
-const { PATH_CONSTANTS, REGEXP_CONSTANTS } = require("../../constants");
+const {
+  PATH_CONSTANTS,
+  REGEXP_CONSTANTS,
+  TEMPLATE_CONSTANTS,
+  SEPARATOR_CONSTANTS
+} = require("../../constants");
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -34,15 +39,15 @@ module.exports = class extends Generator {
     const pascalCaseName = pascalCase(name);
 
     const filePath = this.destinationPath(PATH_CONSTANTS.MONGO_DATA_SERVICES_MODULE_PATH);
-    let fileContent = this.fs.read(filePath);
 
-    // update import model
-    fileContent = utils.updateImport(fileContent, PATH_CONSTANTS.MODEL_RELATIVE_PATH, `\n  ${pascalCaseName},\n  ${pascalCaseName}Schema\n`);
-
-    // update MongooseModule.forFeature
-    const newForFeatureStatement = `\n      { name: ${pascalCaseName}.name, schema: ${pascalCaseName}Schema },`;
-    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGOOSEMODULE_FORFEATURE_MODELS, newForFeatureStatement);
-
-    this.fs.write(filePath, fileContent);
+    utils.chainFileOperations(this.fs, filePath)
+      .read()
+      .appendToImport(PATH_CONSTANTS.MODEL_RELATIVE_PATH, TEMPLATE_CONSTANTS.TEMPLATE_SCHEMA_IMPORT(pascalCaseName)) // import model
+      .appendToMatchWithSeparator(
+        REGEXP_CONSTANTS.REGEX_MONGOOSEMODULE_FORFEATURE_MODELS,
+        TEMPLATE_CONSTANTS.TEMPLATE_MONGOOSEMODULE_FORFEATURE_MODELS(pascalCaseName),
+        SEPARATOR_CONSTANTS.SEPARATOR_COMMA
+      ) // update MongooseModule.forFeature
+      .write();
   }
 };

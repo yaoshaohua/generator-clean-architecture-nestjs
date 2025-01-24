@@ -2,7 +2,12 @@ const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const pluralize = require("pluralize");
 const utils = require("../../utils/index.js");
-const { PATH_CONSTANTS, REGEXP_CONSTANTS } = require("../../constants");
+const {
+  PATH_CONSTANTS,
+  REGEXP_CONSTANTS,
+  TEMPLATE_CONSTANTS,
+  SEPARATOR_CONSTANTS
+} = require("../../constants");
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -36,23 +41,25 @@ module.exports = class extends Generator {
     const pluralName = pluralize(name);
 
     const filePath = this.destinationPath(PATH_CONSTANTS.MONGO_DATA_SERVICES_SERVICE_PATH);
-    let fileContent = this.fs.read(filePath);
 
-    // update import model
-    fileContent = utils.updateImport(fileContent, PATH_CONSTANTS.MODEL_RELATIVE_PATH, `\n  ${pascalCaseName},\n  ${pascalCaseName}Document\n`);
-
-    // update property
-    const newProperty = `  ${pluralName}: MongoGenericRepository<${pascalCaseName}>;\n`;
-    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_CLASS_UNTIL_CONSTRUCTOR, newProperty);
-
-    // update constructor
-    const newInject = `\n    @InjectModel(${pascalCaseName}.name)\n    private ${pascalCaseName}Repository: Model<${pascalCaseName}Document>,\n`;
-    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_CONSTRUCTOR_PARAMETERS, newInject);
-
-    // update bootstrap
-    const newBootstrapDefine = `    this.${pluralName} = new MongoGenericRepository<${pascalCaseName}>(this.${pascalCaseName}Repository);`;
-    fileContent = utils.updatePattern(fileContent, REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_ONAPPLICATIONBOOTSTRAP_IMPLEMENTATION, newBootstrapDefine);
-
-    this.fs.write(filePath, fileContent);
+    utils.chainFileOperations(this.fs, filePath)
+      .read()
+      .appendToImport(PATH_CONSTANTS.MODEL_RELATIVE_PATH, TEMPLATE_CONSTANTS.TEMPLATE_DOCUMENT_IMPORT(pascalCaseName)) // import model
+      .appendToMatchWithSeparator(
+        REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_CLASS_UNTIL_CONSTRUCTOR,
+        TEMPLATE_CONSTANTS.TEMPLATE_MONGODATASERVICES_CLASS_UNTIL_CONSTRUCTOR(pluralName, pascalCaseName),
+        SEPARATOR_CONSTANTS.SEPARATOR_SEMICOLON
+      ) // update property
+      .appendToMatchWithSeparator(
+        REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_CONSTRUCTOR_PARAMETERS,
+        TEMPLATE_CONSTANTS.TEMPLATE_MONGODATASERVICES_CONSTRUCTOR_PARAMETERS(pascalCaseName),
+        SEPARATOR_CONSTANTS.SEPARATOR_COMMA
+      ) // update constructor
+      .appendToMatchWithSeparator(
+        REGEXP_CONSTANTS.REGEX_MONGODATASERVICES_ONAPPLICATIONBOOTSTRAP_IMPLEMENTATION,
+        TEMPLATE_CONSTANTS.TEMPLATE_MONGODATASERVICES_ONAPPLICATIONBOOTSTRAP_IMPLEMENTATION(pluralName, pascalCaseName),
+        SEPARATOR_CONSTANTS.SEPARATOR_SEMICOLON
+      ) // update bootstrap
+      .write();
   }
 };

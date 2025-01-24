@@ -42,16 +42,16 @@ module.exports = class extends Generator {
 
     utils.chainFileOperations(this.fs, filePath)
       .read()
-      .appendToImport(PATH_CONSTANTS.CONTROLLERS_RELATIVE_PATH, TEMPLATE_CONSTANTS.IMPORT_CONTROLLER_TEMPLATE(pascalCaseName)) // import controller
-      .insertNewImportStatement(TEMPLATE_CONSTANTS.IMPORT_USE_CASE_TEMPLATE(name, pascalCaseName)) // import use case
+      .appendToImport(PATH_CONSTANTS.CONTROLLERS_RELATIVE_PATH, TEMPLATE_CONSTANTS.TEMPLATE_CONTROLLER_IMPORT(pascalCaseName)) // import controller
+      .insertNewImportStatement(TEMPLATE_CONSTANTS.TEMPLATE_USE_CASE_IMPORT(name, pascalCaseName)) // import use case
       .appendToMatchWithSeparator(
         REGEXP_CONSTANTS.REGEX_MODULE_IMPORTS,
-        TEMPLATE_CONSTANTS.MODULE_IMPORTS_TEMPLATE(pascalCaseName),
+        TEMPLATE_CONSTANTS.TEMPLATE_MODULE_IMPORTS(pascalCaseName),
         SEPARATOR_CONSTANTS.SEPARATOR_COMMA
       ) // update imports
       .appendToMatchWithSeparator(
         REGEXP_CONSTANTS.REGEX_MODULE_CONTROLLERS,
-        TEMPLATE_CONSTANTS.MODULE_CONTROLLERS_TEMPLATE(pascalCaseName),
+        TEMPLATE_CONSTANTS.TEMPLATE_MODULE_CONTROLLERS(pascalCaseName),
         SEPARATOR_CONSTANTS.SEPARATOR_COMMA
       ) // update controllers
       .write();
