@@ -1,3 +1,4 @@
+const path = require('path');
 const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const pluralize = require("pluralize");

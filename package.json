@@ -1,6 +1,6 @@
 {
   "name": "generator-clean-architecture-nestjs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A yeoman generator for clean-architecture-nestjs apps.",
   "author": "yaoshaohua",
   "files": [
