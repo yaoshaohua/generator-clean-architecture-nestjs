@@ -1,6 +1,6 @@
 {
   "name": "generator-clean-architecture-nestjs",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A yeoman generator for clean-architecture-nestjs apps.",
   "author": "yaoshaohua",
   "files": [
@@ -17,7 +17,7 @@
     "chalk": "^2.1.0",
     "change-case": "^5.4.4",
     "pluralize": "^8.0.0",
-    "yeoman-generator": "^3.1.1",
+    "yeoman-generator": "^7.4.0",
     "yosay": "^2.0.2"
   },
   "repository": "git@github.com:yaoshaohua/generator-clean-architecture-nestjs.git",
