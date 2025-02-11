@@ -1,14 +1,13 @@
-const path = require('path');
 const Generator = require("yeoman-generator");
 const { pascalCase } = require("change-case");
 const pluralize = require("pluralize");
-const utils = require(path.resolve(__dirname, '../../utils/index.js'));
+const utils = require('../../utils/index.js');
 const {
   PATH_CONSTANTS,
   REGEXP_CONSTANTS,
   TEMPLATE_CONSTANTS,
   SEPARATOR_CONSTANTS
-} = require(path.resolve(__dirname, '../../constants'));
+} = require('../../constants');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
